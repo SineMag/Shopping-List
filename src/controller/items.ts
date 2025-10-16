@@ -14,7 +14,7 @@ export const getItemById = (id: number): Item | undefined => {
     return item;
 }
 
-export const addItem = (name: string, quantity: number, purchasedStatus: string): Item => {
+export const addItem = (name: string, quantity: number, purchasedStatus: boolean): Item => {
     const newItem: Item = {
         id: currentId++,
         name,
@@ -25,7 +25,7 @@ export const addItem = (name: string, quantity: number, purchasedStatus: string)
     return newItem;
 }
 
-export const updateItem = (id: number, name?: string, quantity?: number, purchasedStatus?: string): Item | undefined => {
+export const updateItem = (id: number, name?: string, quantity?: number, purchasedStatus?: boolean): Item | undefined => {
     const itemIndex = items.findIndex(item => item.id === id);
     
     if (itemIndex === -1) {

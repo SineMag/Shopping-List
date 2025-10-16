@@ -49,9 +49,9 @@ export const itemsRoute = async (req: IncomingMessage, res: ServerResponse) => {
             res.end(JSON.stringify({ error: "Quantity is required and must be a number" }));
             return;
           }
-          if (!purchasedStatus || typeof purchasedStatus !== "string") {
+          if (purchasedStatus === undefined || typeof purchasedStatus !== "boolean") {
             res.writeHead(400, { "content-type": "application/json" });
-            res.end(JSON.stringify({ error: "Purchased status is required" }));
+            res.end(JSON.stringify({ error: "Purchased status is required and must be a boolean" }));
             return;
           }
 
@@ -93,9 +93,9 @@ export const itemsRoute = async (req: IncomingMessage, res: ServerResponse) => {
             res.end(JSON.stringify({ error: "Quantity must be a number" }));
             return;
           }
-          if (purchasedStatus !== undefined && typeof purchasedStatus !== "string") {
+          if (purchasedStatus !== undefined && typeof purchasedStatus !== "boolean") {
             res.writeHead(400, { "content-type": "application/json" });
-            res.end(JSON.stringify({ error: "Purchased status must be a string" }));
+            res.end(JSON.stringify({ error: "Purchased status must be a boolean" }));
             return;
           }
 

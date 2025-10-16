@@ -1,25 +1,25 @@
-import { ShoppingItem } from '../types/items';
+import { Item } from '../models/item';
 
-let items: ShoppingItem[] = []
+// In-memory storage for items
+let items: Item[] = []
 
-let currentId = 0;
+let currentId = 1;
 
-export const getItems = (): ShoppingItem[] => {
+export const getItems = (): Item[] => {
     return items;
 }
 
-export const getItemById = (id: number): ShoppingItem | undefined => {
+export const getItemById = (id: number): Item | undefined => {
     const item = items.find(item => item.id === id);
-
     return item;
 }
 
-export const addItem = (name: string, quantity: number, category: string): ShoppingItem => {
-    const newItem: ShoppingItem = {
+export const addItem = (name: string, quantity: number, purchasedStatus: string): Item => {
+    const newItem: Item = {
         id: currentId++,
         name,
         quantity,
-        category
+        purchasedStatus
     }
     items.push(newItem);
     return newItem;

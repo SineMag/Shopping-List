@@ -1,7 +1,28 @@
 {
+  "name": "shopping-list-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SineMag/Shopping-List.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SineMag/Shopping-List/issues"
+  },
+  "homepage": "https://github.com/SineMag/Shopping-List#readme",
   "dependencies": {
-    "@types/node": "^24.7.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2"
   }
 }

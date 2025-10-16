@@ -1,4 +1,4 @@
-import { ShoppingItem } from '../types/lists';
+import { ShoppingItem } from '../types/items';
 
 let items: ShoppingItem[] = []
 

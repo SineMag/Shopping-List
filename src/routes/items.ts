@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { getItems, getItemById, addItem } from "../controller/lists";
+import { getItems, getItemById, addItem } from "../controller/items";
 
 // https://localhost:4000/items
 

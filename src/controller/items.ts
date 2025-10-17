@@ -44,3 +44,14 @@ export const updateItem = (id: number, name?: string, quantity?: number, purchas
     
     return items[itemIndex];
 }
+
+export const deleteItem = (id: number): boolean => {
+    const itemIndex = items.findIndex(item => item.id === id);
+    
+    if (itemIndex === -1) {
+        return false;
+    }
+    
+    items.splice(itemIndex, 1);
+    return true;
+}

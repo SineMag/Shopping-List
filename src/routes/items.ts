@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { getItems, getItemById, addItem, updateItem, deleteItem } from "../controller/items";
 
-// https://localhost:4000/items
+//Server runs on => https://localhost:4000/items
 
 export const itemsRoute = async (req: IncomingMessage, res: ServerResponse) => {
   if (req.url?.startsWith("/items")) {
@@ -82,7 +82,7 @@ export const itemsRoute = async (req: IncomingMessage, res: ServerResponse) => {
         try {
           const { name, quantity, purchasedStatus } = JSON.parse(body);
           
-          // Validation
+          // Validation section
           if (name !== undefined && typeof name !== "string") {
             res.writeHead(400, { "content-type": "application/json" });
             res.end(JSON.stringify({ error: "Name must be a string" }));

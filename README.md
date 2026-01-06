@@ -1,5 +1,7 @@
+<img src="https://socialify.git.ci/SineMag/Shopping-List/image?language=1&owner=1&name=1&stargazers=1&theme=Light" alt="Shopping-List" width="640" height="320" />
 
-## API
+
+## Shopping List
 
 Base URL: http://localhost:4000
 

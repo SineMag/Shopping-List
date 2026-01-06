@@ -1,144 +1,131 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { getItems, getItemById, addItem, updateItem, deleteItem } from "../controller/items";
+import {
+  getItems,
+  getItemById,
+  addItem,
+  updateItem,
+  deleteItem,
+} from "../controller/items";
+import { success, created, error, noContent, readJson } from "../utils/http";
 
 //Server runs on => https://localhost:4000/items
 
 export const itemsRoute = async (req: IncomingMessage, res: ServerResponse) => {
   if (req.url?.startsWith("/items")) {
-    const parts = req.url.split("/");
-    const id = parts[2] ? parseInt(parts[2]) : undefined;
+    const path = req.url?.split("?")[0] || "";
+    const parts = path.split("/");
+    const id = parts[2] ? Number(parts[2]) : undefined;
 
     if (req.method === "GET" && !id) {
-      res.writeHead(200, { "content-type": "application/json" });
-      res.end(JSON.stringify(getItems()));
-      return;
+      return success(res, 200, getItems());
     }
 
     if (req.method === "GET" && id) {
       if (isNaN(id)) {
-        res.writeHead(400, { "content-type": "application/json" });
-        res.end(JSON.stringify({ error: "Invalid item ID" }));
-        return;
+        return error(res, 400, "INVALID_ID", "Invalid item ID");
       }
       const item = getItemById(id);
       if (!item) {
-        res.writeHead(404, { "content-type": "application/json" });
-        res.end(JSON.stringify({ error: "Item not found" }));
-        return;
+        return error(res, 404, "NOT_FOUND", "Item not found");
       }
-      res.writeHead(200, { "content-type": "application/json" });
-      res.end(JSON.stringify(item));
-      return;
+      return success(res, 200, item);
     }
     if (req.method === "POST") {
-      let body = "";
-      req.on("data", (chunk) => {
-        body += chunk.toString();
-      });
-
-      req.on("end", () => {
-        try {
-          const { name, quantity, purchasedStatus } = JSON.parse(body);
-          if (!name || typeof name !== "string") {
-            res.writeHead(400, { "content-type": "application/json" });
-            res.end(JSON.stringify({ error: "Name is required" }));
-            return;
-          }
-          if (quantity === undefined || typeof quantity !== "number") {
-            res.writeHead(400, { "content-type": "application/json" });
-            res.end(JSON.stringify({ error: "Quantity is required and must be a number" }));
-            return;
-          }
-          if (purchasedStatus === undefined || typeof purchasedStatus !== "boolean") {
-            res.writeHead(400, { "content-type": "application/json" });
-            res.end(JSON.stringify({ error: "Purchased status is required and must be a boolean" }));
-            return;
-          }
-
-          const newItem = addItem(name, quantity, purchasedStatus);
-          res.writeHead(201, { "content-type": "application/json" });
-          res.end(JSON.stringify(newItem));
-        } catch (error) {
-            res.writeHead(400, { "content-type": "application/json" });
-            res.end(JSON.stringify({ error: "Invalid JSON payload" }));
+      try {
+        const { name, quantity, purchasedStatus } = await readJson<any>(req);
+        if (!name || typeof name !== "string") {
+          return error(res, 400, "VALIDATION_ERROR", "Name is required");
         }
-      });
-      return;
+        if (quantity === undefined || typeof quantity !== "number") {
+          return error(
+            res,
+            400,
+            "VALIDATION_ERROR",
+            "Quantity is required and must be a number"
+          );
+        }
+        if (
+          purchasedStatus === undefined ||
+          typeof purchasedStatus !== "boolean"
+        ) {
+          return error(
+            res,
+            400,
+            "VALIDATION_ERROR",
+            "Purchased status is required and must be a boolean"
+          );
+        }
+
+        const newItem = addItem(name, quantity, purchasedStatus);
+        return created(res, newItem);
+      } catch (e) {
+        return error(res, 400, "INVALID_JSON", "Invalid JSON payload");
+      }
     }
 
     if (req.method === "PUT" && id) {
       if (isNaN(id)) {
-        res.writeHead(400, { "content-type": "application/json" });
-        res.end(JSON.stringify({ error: "Invalid item ID" }));
-        return;
+        return error(res, 400, "INVALID_ID", "Invalid item ID");
       }
 
-      let body = "";
-      req.on("data", (chunk) => {
-        body += chunk.toString();
-      });
+      try {
+        const { name, quantity, purchasedStatus } = await readJson<any>(req);
 
-      req.on("end", () => {
-        try {
-          const { name, quantity, purchasedStatus } = JSON.parse(body);
-          
-          // Validation section
-          if (name !== undefined && typeof name !== "string") {
-            res.writeHead(400, { "content-type": "application/json" });
-            res.end(JSON.stringify({ error: "Name must be a string" }));
-            return;
-          }
-          if (quantity !== undefined && typeof quantity !== "number") {
-            res.writeHead(400, { "content-type": "application/json" });
-            res.end(JSON.stringify({ error: "Quantity must be a number" }));
-            return;
-          }
-          if (purchasedStatus !== undefined && typeof purchasedStatus !== "boolean") {
-            res.writeHead(400, { "content-type": "application/json" });
-            res.end(JSON.stringify({ error: "Purchased status must be a boolean" }));
-            return;
-          }
-
-          const updatedItem = updateItem(id, name, quantity, purchasedStatus);
-          
-          if (!updatedItem) {
-            res.writeHead(404, { "content-type": "application/json" });
-            res.end(JSON.stringify({ error: "Item not found" }));
-            return;
-          }
-
-          res.writeHead(200, { "content-type": "application/json" });
-          res.end(JSON.stringify(updatedItem));
-        } catch (error) {
-          res.writeHead(400, { "content-type": "application/json" });
-          res.end(JSON.stringify({ error: "Invalid JSON payload" }));
+        // Validation section
+        if (name !== undefined && typeof name !== "string") {
+          return error(res, 400, "VALIDATION_ERROR", "Name must be a string");
         }
-      });
-      return;
+        if (quantity !== undefined && typeof quantity !== "number") {
+          return error(
+            res,
+            400,
+            "VALIDATION_ERROR",
+            "Quantity must be a number"
+          );
+        }
+        if (
+          purchasedStatus !== undefined &&
+          typeof purchasedStatus !== "boolean"
+        ) {
+          return error(
+            res,
+            400,
+            "VALIDATION_ERROR",
+            "Purchased status must be a boolean"
+          );
+        }
+
+        const updatedItem = updateItem(id, name, quantity, purchasedStatus);
+
+        if (!updatedItem) {
+          return error(res, 404, "NOT_FOUND", "Item not found");
+        }
+
+        return success(res, 200, updatedItem);
+      } catch (e) {
+        return error(res, 400, "INVALID_JSON", "Invalid JSON payload");
+      }
     }
 
     if (req.method === "DELETE" && id) {
       if (isNaN(id)) {
-        res.writeHead(400, { "content-type": "application/json" });
-        res.end(JSON.stringify({ error: "Invalid item ID" }));
-        return;
+        return error(res, 400, "INVALID_ID", "Invalid item ID");
       }
 
       const deleted = deleteItem(id);
-      
+
       if (!deleted) {
-        res.writeHead(404, { "content-type": "application/json" });
-        res.end(JSON.stringify({ error: "Item not found" }));
-        return;
+        return error(res, 404, "NOT_FOUND", "Item not found");
       }
 
-      res.writeHead(204);
-      res.end();
-      return;
+      return noContent(res);
     }
 
-    res.writeHead(405, { "content-type": "application/json" });
-    res.end(JSON.stringify({ error: "Method Not Allowed on /items" }));
-    return;
+    return error(
+      res,
+      405,
+      "METHOD_NOT_ALLOWED",
+      "Method Not Allowed on /items"
+    );
   }
 };

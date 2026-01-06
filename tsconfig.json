@@ -2,9 +2,12 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "module": "nodenext",
+    "module": "CommonJS",
     "target": "esnext",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["node"],
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   }
 }

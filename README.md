@@ -1,6 +1,5 @@
 <img src="https://socialify.git.ci/SineMag/Shopping-List/image?language=1&owner=1&name=1&stargazers=1&theme=Light" alt="Shopping-List" width="640" height="320" />
 
-
 ## Shopping List
 
 Base URL: http://localhost:4000
@@ -12,6 +11,15 @@ All endpoints are under the /items path and use JSON. The project is a small in-
 - quantity: number
 - purchasedStatus: boolean
 
+### Response shape
+
+All responses follow a consistent JSON envelope:
+
+- Success:
+  { "success": true, "data": <payload> }
+- Error:
+  { "success": false, "error": { "code": string, "message": string, "details"?: any } }
+
 ### Endpoints
 
 - GET /items
@@ -19,14 +27,14 @@ All endpoints are under the /items path and use JSON. The project is a small in-
   - Description: Return an array of all items.
   - Response: 200 OK
   - Body example:
-    [{ "id": 1, "name": "Milk", "quantity": 2, "purchasedStatus": false }]
+    { "success": true, "data": [ { "id": 1, "name": "Milk", "quantity": 2, "purchasedStatus": false } ] }
 
 - GET /items/:id
 
   - Description: Return a single item by id.
   - Response: 200 OK with the item, or 404 if not found, or 400 if id is invalid.
   - Body example:
-    { "id": 1, "name": "Milk", "quantity": 2, "purchasedStatus": false }
+    { "success": true, "data": { "id": 1, "name": "Milk", "quantity": 2, "purchasedStatus": false } }
 
 - POST /items
 
@@ -35,12 +43,16 @@ All endpoints are under the /items path and use JSON. The project is a small in-
   - Response: 201 Created with the new item, or 400 for invalid payload.
   - Request example:
     { "name": "Bread", "quantity": 1, "purchasedStatus": false }
+  - Response example:
+    { "success": true, "data": { "id": 2, "name": "Bread", "quantity": 1, "purchasedStatus": false } }
 
 - PUT /items/:id
 
   - Description: Update an existing item. Send any subset of fields to update.
   - Accepts JSON body with name (string), quantity (number), purchasedStatus (boolean).
   - Response: 200 OK with updated item, 404 if not found, 400 for invalid payload or id.
+  - Response example:
+    { "success": true, "data": { "id": 1, "name": "Milk", "quantity": 3, "purchasedStatus": true } }
 
 - DELETE /items/:id
   - Description: Delete an item by id.
@@ -51,6 +63,10 @@ All endpoints are under the /items path and use JSON. The project is a small in-
 - 400 Bad Request: malformed JSON, invalid id, or missing/incorrect types for required fields on POST.
 - 404 Not Found: requested item id does not exist.
 - 405 Method Not Allowed: unsupported method on /items path.
+
+Error body example:
+
+{ "success": false, "error": { "code": "VALIDATION_ERROR", "message": "Quantity is required and must be a number" } }
 
 ## Run locally
 
@@ -108,9 +124,13 @@ curl -X DELETE http://localhost:4000/items/1
 
 - This API uses an in-memory array for storage. Data will be lost when the server restarts.
 - The server expects proper JSON bodies; invalid JSON will return 400.
+
 ---
+
 ## To Ponder:
+
 ---
+
 ### Shopping-List
 
 npm i typescript ts-node @types/node

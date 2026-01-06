@@ -1,5 +1,6 @@
 import http, { IncomingMessage, ServerResponse } from "http";
 import { itemsRoute } from "./routes/items";
+import { error } from "./utils/http";
 
 const PORT = 4000;
 
@@ -9,8 +10,7 @@ const requestListener = (req: IncomingMessage, res: ServerResponse) => {
   if (req.url?.startsWith("/items")) {
     itemsRoute(req, res);
   } else {
-    res.writeHead(404, { "content-type": "application/json" });
-    res.end(JSON.stringify({ message: "Route Mentioned Not Found" }));
+    return error(res, 404, "ROUTE_NOT_FOUND", "Route Mentioned Not Found");
   }
 };
 
